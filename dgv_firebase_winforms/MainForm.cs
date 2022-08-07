@@ -52,13 +52,13 @@ namespace dgv_firebase_winforms
             }
         }
         private readonly FirestoreDb _db;
-        private readonly BindingList<DegerlerClass> DataSource = new BindingList<DegerlerClass>();
+        private readonly BindingList<ValuesClass> DataSource = new BindingList<ValuesClass>();
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             dataGridView1.DataSource = DataSource;
             // Generate and format columns
-            DataSource.Add(new DegerlerClass());
+            DataSource.Add(new ValuesClass());
             foreach(DataGridViewColumn column in dataGridView1.Columns)
             {
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -105,7 +105,7 @@ namespace dgv_firebase_winforms
                 var snapshot = await
                     _db.Collection(@"values")
                     .GetSnapshotAsync(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
-                var recordset = snapshot.Select(_ => _.ConvertTo<DegerlerClass>());
+                var recordset = snapshot.Select(_ => _.ConvertTo<ValuesClass>());
                 DataSource.Clear();
                 foreach (var record in recordset)
                 {
@@ -119,8 +119,9 @@ namespace dgv_firebase_winforms
     }
 
     // https://stackoverflow.com/a/68223746/5438626
+    // NOTE: Original post seems to use `dergerlerClass` and `valuesClass` interchangeably.
     [FirestoreData]
-    public class DegerlerClass
+    public class ValuesClass
     {
         [FirestoreDocumentId, Browsable(false)]
         public string Id { get; set; }
