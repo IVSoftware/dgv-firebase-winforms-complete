@@ -65,10 +65,11 @@ namespace dgv_firebase_winforms
             }
             DataSource.Clear();
             // When User adds a row, it will be added to the database.
-            dataGridView1.CellValuePushed += addOrSetDocument;
+            dataGridView1.CellEndEdit += addOrSetDocument;
             dataGridView1.UserDeletingRow += onUserDeletingRow;
         }
-        private async void addOrSetDocument(object sender, DataGridViewCellValueEventArgs e)
+
+        private async void addOrSetDocument(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < DataSource.Count)
             {
