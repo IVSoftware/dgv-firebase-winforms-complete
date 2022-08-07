@@ -52,13 +52,13 @@ namespace dgv_firebase_winforms
             }
         }
         private readonly FirestoreDb _db;
-        private readonly BindingList<degerlerClass> DataSource = new BindingList<degerlerClass>();
+        private readonly BindingList<DegerlerClass> DataSource = new BindingList<DegerlerClass>();
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             dataGridView1.DataSource = DataSource;
             // Generate and format columns
-            DataSource.Add(new degerlerClass());
+            DataSource.Add(new DegerlerClass());
             foreach(DataGridViewColumn column in dataGridView1.Columns)
             {
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -101,29 +101,26 @@ namespace dgv_firebase_winforms
 
         private async void dataView_Click(object sender, EventArgs e)
         {
-            var task = 
-                _db.Collection(@"values")
-                .GetSnapshotAsync(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
-            var snapshot = await task;
-            if (task.Status == TaskStatus.RanToCompletion)
-            {
-                var recordset = snapshot.Select(_ => _.ConvertTo<degerlerClass>());
-                PopulateDataView(recordset);
+            try{
+                var snapshot = await
+                    _db.Collection(@"values")
+                    .GetSnapshotAsync(new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token);
+                var recordset = snapshot.Select(_ => _.ConvertTo<DegerlerClass>());
+                DataSource.Clear();
+                foreach (var record in recordset)
+                {
+                    DataSource.Add(record);
+                }
             }
-        }
-        private void PopulateDataView(IEnumerable<degerlerClass> recordset)
-        {
-            DataSource.Clear();
-            foreach (var record in recordset)
-            {
-                DataSource.Add(record);
+            catch (Exception ex){
+                Debug.Assert(false, ex.Message);
             }
         }
     }
 
     // https://stackoverflow.com/a/68223746/5438626
     [FirestoreData]
-    public class degerlerClass
+    public class DegerlerClass
     {
         [FirestoreDocumentId, Browsable(false)]
         public string Id { get; set; }
